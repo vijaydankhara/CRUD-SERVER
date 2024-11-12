@@ -1,22 +1,41 @@
 import mongoose from "mongoose";
+
 const userSchema = new mongoose.Schema({
-    fname:{
-        type : String,
+    firstName: {
+        type: String,
+        required: true,   
+    },
+    lastName: {
+        type: String,
+        required: true,   
+    },
+    gender: {
+        type: String,
+        required: true,   
+        enum: ['Male', 'Female']
+    },
+    email: {
+        type: String,       
+        required: true,     
+        unique: true
+    },
+    password: {
+        type: String,
         required: true
     },
-    lname:{
-        type : String,
-        required: true
+    mobileNo: {
+        type: Number
     },
-    email:{
-        type : String,
-        required: true
+    createdAt: {
+        type: Date,
+        default: Date.now
     },
-    password:{
-        type : String,
-        required: true
+    updatedAt: {
+        type: Date,
+        default: Date.now
     }
-})
+},{
+    versionKey: false
+});
 
-
-export default mongoose.model("User",userSchema)
+export default mongoose.model("User", userSchema);

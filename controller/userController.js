@@ -1,11 +1,16 @@
 import User from "../model/userModel.js";
+import bcrypt from "bcryptjs";
 
 export const create = async (req, res) => {
   try {
-    const userData = new User(req.body);
-    if (!userData) {
+    if (!req.body) {
       return res.status(404).json({ msg: "User Data Not Found" });
     }
+    const hashedPassword = await bcrypt.hash(req.body.password, 10);
+    const userData = new User({
+      ...req.body,
+      password: hashedPassword,
+    });
 
     const savedDatga = await userData.save();
     res.status(200).json(savedDatga);

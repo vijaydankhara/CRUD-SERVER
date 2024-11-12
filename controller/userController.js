@@ -1,23 +1,41 @@
-import User from "../model/userModel.js";
 import bcrypt from "bcryptjs";
+import User from "../model/userModel.js";
 
 export const create = async (req, res) => {
   try {
     if (!req.body) {
-      return res.status(404).json({ msg: "User Data Not Found" });
+      return res.status(400).json({ msg: "User Data Not Found" });
     }
-    const hashedPassword = await bcrypt.hash(req.body.password, 10);
+
+    const { email, mobileNo, password } = req.body;
+
+    // Email validation
+    const emailRegex = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/;
+    if (!emailRegex.test(email)) {
+      return res.status(400).json({ msg: "Invalid email format" });
+    }
+
+    // Phone number validation
+    const phoneRegex = /^\d{10}$/;
+    if (!phoneRegex.test(mobileNo)) {
+      return res.status(400).json({ msg: "Invalid phone number format" });
+    }
+
+    // Hash the password
+    const hashedPassword = await bcrypt.hash(password, 10);
+
     const userData = new User({
       ...req.body,
       password: hashedPassword,
     });
 
-    const savedDatga = await userData.save();
-    res.status(200).json(savedDatga);
+    const savedData = await userData.save();
+    res.status(200).json(savedData);
   } catch (error) {
-    res.status(500).json({ error: error });
+    res.status(500).json({ error: error.message });
   }
 };
+
 
 export const getAll = async (req, res) => {
   try {
